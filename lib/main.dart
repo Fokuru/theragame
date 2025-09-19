@@ -538,25 +538,35 @@ class _MyWidgetState extends State<MyWidget> {
     boardItem = prefs.getString('boardItem') ?? "BINGO";
 
     int? bgColorInt = prefs.getInt('backgroundColor');
-    if (bgColorInt != null) {
-      backgroundColor = Color(bgColorInt);
-    } else {
-      backgroundColor = Color.fromARGB(255, 221, 255, 199);
-    }
+    backgroundColor = bgColorInt != null
+        ? Color(bgColorInt)
+        : Color.fromARGB(255, 221, 255, 199);
 
     int? fgColorInt = prefs.getInt('foregroundColor');
-    if (fgColorInt != null) {
-      foregroundColor = Color(fgColorInt);
-    } else {
-      foregroundColor = Color.fromARGB(255, 15, 115, 60);
-    }
+    foregroundColor = fgColorInt != null
+        ? Color(fgColorInt)
+        : Color.fromARGB(255, 15, 115, 60);
 
     pickedTasks = jsonDecode(prefs.getString('pickedTasks') ?? '[]');
     doneTasks = jsonDecode(prefs.getString('doneTasks') ?? '[]');
 
-    shopItems = List<Map<String, dynamic>>.from(
-      jsonDecode(prefs.getString('shopItems') ?? '[]'),
-    );
+    // Attempt to load shopItems from prefs
+    var loadedShopItems = prefs.getString('shopItems');
+    if (loadedShopItems != null && loadedShopItems.isNotEmpty) {
+      shopItems = List<Map<String, dynamic>>.from(jsonDecode(loadedShopItems));
+    } else {
+      // Fallback: regenerate shopItems if none exist.
+      shopItems = List.generate(
+        16,
+        (index) => {
+          'image': 'images/${kittyTypes[index]}/${kittyTypes[index]}UO.png',
+          'name': kittyNames[index],
+          'price': getPriceForIndex(index),
+          'purchased': index < 4, // first 4 are unlocked by default
+          'using': index == 0, // first one is in use by default
+        },
+      );
+    }
   }
 
   @override
@@ -1376,12 +1386,19 @@ class _MyWidgetState extends State<MyWidget> {
                         Container(
                           width: double.infinity,
                           height: 250.0,
-                          padding: EdgeInsets.all(20.0),
+                          padding: EdgeInsets.all(0.0),
                           color: colorPatterns[selectedPattern].background,
                           child: Align(
-                            alignment: Alignment(0, 0.50),
-                            child: Image(
-                              image: AssetImage((catImages[kittyNumber])),
+                            alignment: Alignment(0.4, 0),
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 70.0),
+                              child: Transform.scale(
+                                scale: 1.75, // 1.5x the current size
+                                child: Image(
+                                  image: AssetImage(catImages[kittyNumber]),
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
                             ),
                           ),
                         ),
