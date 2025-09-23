@@ -411,6 +411,7 @@ class _MyWidgetState extends State<MyWidget> {
     super.initState();
     loadData().then((_) {
       setState(() {
+        updateCatImages();
         isLoading = false;
       });
     });
@@ -854,7 +855,9 @@ class _MyWidgetState extends State<MyWidget> {
                               style: TextStyle(
                                 color:
                                     colorPatterns[selectedPattern].foreground,
-                                fontSize: textSize.toDouble(),
+                                fontSize: textSize.toDouble() > 22
+                                    ? textSize.toDouble() - 6
+                                    : textSize.toDouble() + 4,
                               ),
                               items: List.generate(
                                 colorPatterns.length,
@@ -1508,7 +1511,7 @@ class _MyWidgetState extends State<MyWidget> {
                       child: SingleChildScrollView(
                         child: Center(
                           child: Text(
-                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin',
+                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 1.0.0',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: foregroundColor,
