@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 
 void main() {
   runApp(MyWidget());
@@ -25,58 +26,357 @@ class _MyWidgetState extends State<MyWidget> {
   Color foregroundColor = Color.fromARGB(255, 15, 115, 60);
   String boardItem = "BINGO";
   bool showResetConfirmation = false;
+  int currentTaskIndex = -1;
 
-  var tasks = [
-    "Take a short walk, even if it's just around the room",
-    "Listen to a favorite song",
-    "Draw or color something simple",
-    "Watch a light or funny video",
-    "Write a journal entry about your day",
-    "Do a puzzle, word search, sedoku, or crossword",
-    "Knit, crochet, or do some other simple craft",
-    "Meditate or practice deep breathing for 2-5 minutes",
-    "Try a guided breathing exercise",
-    "Text a friend or family member",
-    "Scroll through calming photos, such as nature or animals",
-    "Pet or cuddle a pet or stuffed animal",
-    "Eat a small snack or drink some water",
-    "Read a short article or comic",
-    "Take a photo of something you find beautiful",
-    "Play a phone game or app-based brain teaser",
-    "Doodle freely or follow a simple drawing tutorial",
-    "Do simple stretches",
-    "Make a gratitude list",
-    "Look through old photos or memories",
-    "Creat a playlist of 'healing' or 'happy' songs",
-    "Listen to a podcast or audiobook",
-    "Wrap yourself in a cozy blanket",
-    "Try progressive muscle relaxation",
-    "Think of three things that went okay today",
-    "Smile on purpose, just because",
-    "Set a tiny goal for the next hour",
-    "Do a quick body scan meditation",
-    "Use a coloring book or app",
-    "Watch an episode of a favorite show",
-    "Repeat a positive affirmation to yourself",
-    "Hold a smooth stone or fidget toy",
-    "Ask yourself, 'What do I need right now?', and do it",
-    "Say no to a stressor, out loud, in writing, or in your head",
-    "Organize a small space, like a drawer, desk, bag, or shelf",
-    "Try a graditude photo challenge",
-    "Watch clouds, birds, or trees from a window",
-    "Try silent sitting or listening for a few minutes",
-    "Read a comforting quote or verse",
-    "Light a flameless candle or turn on soft light",
-    "Keep a comfort box with items that help you feel better nearby",
-    "Write down one hope for the future",
-    "Play with a sensory item like playdough, fabric, or beads",
-    "Massage a part of your body slowly and gently; this can be your hands, feet, scalp, neck, or another body part."
-        "Give someone a positive message or compliment, in writing or in person",
-    "Try a short YouTube meditation or mindfulness video",
-    "Name five things you can see, hear, and feel right now",
-    "Put on something that makes you feel good, whether it's a full outfit or just a pair of socks",
-    "Give yourself permission to rest, even if it's just for a few minutes",
-    "Say or write: 'I am doing my best, and that is enough'",
+  final List<List<List<List<String>>>> tasks = [
+    [
+      [
+        [
+          "Draw or color something simple.",
+          "Keep a comfort box with items that help you feel better nearby.",
+          "Name five things you can see, hear, and feel right now.",
+        ],
+        ["Set a tiny goal for the next hour."],
+        [
+          "Listen to a favorite song.",
+          "Scroll through calming photos, such as nature or animals.",
+          "Take a photo of something you find beautiful.",
+          "Repeat a positive affirmation to yourself.",
+          "Play with a smooth stone or a fidget toy.",
+          "Read a comforting quote or verse.",
+          "Write down one hope for the future.",
+          "Say or write: 'I am doing my best, and that is enough'.",
+        ],
+        [
+          "Text a friend or family member.",
+          "Give someone a positive message or compliment, in writing or in person.",
+        ],
+        ["Do simple stretches."],
+        [
+          "Watch a light or funny video.",
+          "Eat a small snack or drink some water.",
+          "Think of three things that went okay today.",
+          "Smile on purpose, just because.",
+          "Light a flameless candle or turn on a soft light.",
+        ],
+      ],
+      [
+        [
+          "Make a gratitude list.",
+          "Write a journal entry about your day.",
+          "Doodle freely or follow a simple drawing tutorial.",
+          "Use a coloring book or app.",
+          "Try a gratitude photo challenge.",
+        ],
+        [
+          "Play a phone game or app-based brain teaser.",
+          "Organize a small space, like a drawer, desk, bag, or shelf.",
+        ],
+        [
+          "Meditate or practice deep breathing for 2-5 minutes.",
+          "Try a guided breathing exercise.",
+          "Wrap yourself in a cozy blanket.",
+          "Do a quick body scan meditation.",
+          "Watch clouds, birds, or trees from a window.",
+          "Try silent sitting or listening for a few minutes.",
+          "Play with a sensory item like playdough, fabric, or beads.",
+          "Put on something that makes you feel good, whether it's a full outfit or just a pair of socks.",
+          "Give yourself permission to rest, even if it's just for a few minutes.",
+        ],
+        ["Look through old photos or memories."],
+        [
+          "Take a short walk, even if it's just around the room.",
+          "Try progressive muscle relaxation, tensing each muscle entirely and then relaxing them one at a time.",
+          "Try a short YouTube meditation or mindfulness video.",
+        ],
+        [
+          "Pet or cuddle a pet or stuffed animal.",
+          "Ask yourself, 'What do I need right now?', and do it.",
+          "Say no to a stressor, out loud, in writing, or in your head.",
+        ],
+      ],
+      [
+        [
+          "Knit, crochet, or do some other craft.",
+          "Create a playlist of 'healing' or 'happy' songs.",
+        ],
+        ["Do a puzzle, word search, Sudoku, or crossword."],
+        [
+          "Read a short article or comic.",
+          "Listen to a podcast or audiobook.",
+          "Watch an episode of a favorite show.",
+        ],
+        [],
+        [
+          "Massage a part of your body slowly and gently; this can be your hands, feet, scalp, neck, or another body part.",
+        ],
+        [],
+      ],
+    ],
+    [
+      [
+        [
+          "Draw or color something simple.",
+          "Keep a comfort box with items that help you feel better nearby.",
+          "Name five things you can see, hear, and feel right now.",
+          "Write a short poem or haiku about something you love.",
+        ],
+        [
+          "Set a tiny goal for the next hour.",
+          "Write a to-do list for tomorrow that includes one fun activity.",
+        ],
+        [
+          "Listen to a favorite song.",
+          "Scroll through calming photos, such as nature or animals.",
+          "Take a photo of something you find beautiful.",
+          "Repeat a positive affirmation to yourself.",
+          "Play with a smooth stone or a fidget toy.",
+          "Read a comforting quote or verse.",
+          "Write down one hope for the future.",
+          "Say or write: 'I am doing my best, and that is enough'.",
+          "Write down three things you’re grateful for today.",
+          "Lightly scent your space with something calming (lavender, vanilla, etc.)",
+        ],
+        [
+          "Text a friend or family member.",
+          "Give someone a positive message or compliment, in writing or in person.",
+        ],
+        [
+          "Do simple stretches.",
+          "Open a window and focus on feeling the fresh air.",
+          "Water a plant or examine one closely.",
+          "Take a few steps outside your door and describe what you see.",
+        ],
+        [
+          "Watch a light or funny video.",
+          "Eat a small snack or drink some water.",
+          "Think of three things that went okay today.",
+          "Smile on purpose, just because.",
+          "Light a flameless candle or turn on a soft light.",
+        ],
+      ],
+      [
+        [
+          "Make a gratitude list.",
+          "Write a journal entry about your day.",
+          "Doodle freely or follow a simple drawing tutorial.",
+          "Use a coloring book or app.",
+          "Try a gratitude photo challenge.",
+          "Make a simple collage (digital or paper) about an idea such as family, peace, or hope.",
+          "Create a digital mood board for your goals or recovery.",
+          "Decorate your space with something that makes you smile.",
+          "Try making a simple origami figure or paper craft.",
+        ],
+        [
+          "Play a phone game or app-based brain teaser.",
+          "Organize a small space, like a drawer, desk, bag, or shelf.",
+          "Read a short story or a few pages of a favorite book.",
+          "Play an easy memory game or a matching app.",
+        ],
+        [
+          "Meditate or practice deep breathing for 2-5 minutes.",
+          "Try a guided breathing exercise.",
+          "Wrap yourself in a cozy blanket.",
+          "Do a quick body scan meditation.",
+          "Watch clouds, birds, or trees from a window.",
+          "Try silent sitting or listening for a few minutes.",
+          "Play with a sensory item like playdough, fabric, or beads.",
+          "Put on something that makes you feel good, whether it's a full outfit or just a pair of socks.",
+          "Give yourself permission to rest, even if it's just for a few minutes.",
+          "Try a short 5-minute body stretch video.",
+          "Practice 5 minutes of slow, mindful breathing.",
+        ],
+        [
+          "Look through old photos or memories.",
+          "Send someone a kind message at least 2 sentences long about why you appreciate them.",
+        ],
+        [
+          "Take a short walk, even if it's just around the room.",
+          "Try progressive muscle relaxation, tensing each muscle entirely and then relaxing them one at a time.",
+          "Try a short YouTube meditation or mindfulness video.",
+          "Sit or stand outside for a few minutes and notice 1 sound, 1 color, and 1 scent.",
+          "Watch the sunset or sunrise for a few minutes.",
+        ],
+        [
+          "Pet or cuddle a pet or stuffed animal.",
+          "Ask yourself, 'What do I need right now?', and do it.",
+          "Say no to a stressor, out loud, in writing, or in your head.",
+        ],
+      ],
+      [
+        [
+          "Knit, crochet, or do some other craft.",
+          "Create a playlist of 'healing' or 'happy' songs.",
+        ],
+        [
+          "Do a puzzle, word search, Sudoku, or crossword.",
+          "Set a small weekly goal and track your progress.",
+          "Rearrange or tidy a small corner of your space.",
+        ],
+        [
+          "Read a short article or comic.",
+          "Listen to a podcast or audiobook.",
+          "Watch an episode of a favorite show.",
+          "Journal about what brings you comfort.",
+          "Write yourself a supportive letter.",
+        ],
+        ["Call or video chat with a loved one."],
+        [
+          "Massage a part of your body slowly and gently; this can be your hands, feet, scalp, neck, or another body part.",
+        ],
+        [
+          "Make a ‘comfort kit’ with snacks, music, and items that calm you.",
+          "Reflect on how others have supported you.",
+        ],
+      ],
+    ],
+    [
+      [
+        [
+          "Draw or color something simple.",
+          "Keep a comfort box with items that help you feel better nearby.",
+          "Name five things you can see, hear, and feel right now.",
+          "Write a short poem or haiku about something you love.",
+          "Create a collage of colors that represent your emotions.",
+          "Make a playlist reflecting your healing journey.",
+        ],
+        [
+          "Set a tiny goal for the next hour.",
+          "Write a to-do list for tomorrow that includes one fun activity.",
+          "Learn one new word or phrase.",
+        ],
+        [
+          "Listen to a favorite song.",
+          "Scroll through calming photos, such as nature or animals.",
+          "Take a photo of something you find beautiful.",
+          "Repeat a positive affirmation to yourself.",
+          "Play with a smooth stone or a fidget toy.",
+          "Read a comforting quote or verse.",
+          "Write down one hope for the future.",
+          "Say or write: 'I am doing my best, and that is enough'.",
+          "Write down three things you’re grateful for today.",
+          "Lightly scent your space with something calming (lavender, vanilla, etc.)",
+        ],
+        [
+          "Text a friend or family member.",
+          "Give someone a positive message or compliment, in writing or in person.",
+        ],
+        [
+          "Do simple stretches.",
+          "Open a window and focus on feeling the fresh air.",
+          "Water a plant or examine one closely.",
+          "Take a few steps outside your door and describe what you see.",
+          "Stretch your arms and back while standing or sitting.",
+        ],
+        [
+          "Watch a light or funny video.",
+          "Eat a small snack or drink some water.",
+          "Think of three things that went okay today.",
+          "Smile on purpose, just because.",
+          "Light a flameless candle or turn on a soft light.",
+          "Write down what friendship means to you.",
+          "Reflect on who makes you feel supported.",
+        ],
+      ],
+      [
+        [
+          "Make a gratitude list.",
+          "Write a journal entry about your day.",
+          "Doodle freely or follow a simple drawing tutorial.",
+          "Use a coloring book or app.",
+          "Try a gratitude photo challenge.",
+          "Make a simple collage (digital or paper) about an idea such as family, peace, or hope.",
+          "Create a digital mood board for your goals or recovery.",
+          "Decorate your space with something that makes you smile.",
+          "Try making a simple origami figure or paper craft.",
+          "Make a small scrapbook or photo journal of your journey.",
+        ],
+        [
+          "Play a phone game or app-based brain teaser.",
+          "Organize a small space, like a drawer, desk, bag, or shelf.",
+          "Read a short story or a few pages of a favorite book.",
+          "Play an easy memory game or a matching app.",
+          "Identify one challenge and brainstorm gentle solutions.",
+          "Plan a small achievable goal for next week.",
+        ],
+        [
+          "Meditate or practice deep breathing for 2-5 minutes.",
+          "Try a guided breathing exercise.",
+          "Wrap yourself in a cozy blanket.",
+          "Do a quick body scan meditation.",
+          "Watch clouds, birds, or trees from a window.",
+          "Try silent sitting or listening for a few minutes.",
+          "Play with a sensory item like playdough, fabric, or beads.",
+          "Put on something that makes you feel good, whether it's a full outfit or just a pair of socks.",
+          "Give yourself permission to rest, even if it's just for a few minutes.",
+          "Try a short 5-minute body stretch video.",
+          "Practice 5 minutes of slow, mindful breathing.",
+          "Write about how you’ve grown through recent challenges.",
+          "Record a voice note or video of your thoughts or reflections.",
+          "Write affirmations for yourself and display them somewhere visible.",
+        ],
+        [
+          "Look through old photos or memories.",
+          "Send someone a kind message at least 2 sentences long about why you appreciate them.",
+          "Join a virtual or local support group.",
+          "Share a photo or story about something that brings you joy.",
+        ],
+        [
+          "Take a short walk, even if it's just around the room.",
+          "Try progressive muscle relaxation, tensing each muscle entirely and then relaxing them one at a time.",
+          "Try a short YouTube meditation or mindfulness video.",
+          "Sit or stand outside for a few minutes and notice 1 sound, 1 color, and 1 scent.",
+          "Watch the sunset or sunrise for a few minutes.",
+          "Walk a short path you enjoy and focus on rhythm and breathing.",
+          "Do gentle upper-body stretches in some place calm.",
+          "Lightly stretch your legs while sitting on a bench or step.",
+        ],
+        [
+          "Pet or cuddle a pet or stuffed animal.",
+          "Ask yourself, 'What do I need right now?', and do it.",
+          "Say no to a stressor, out loud, in writing, or in your head.",
+          "Write about how others have influenced your strength.",
+        ],
+      ],
+      [
+        [
+          "Knit, crochet, or do some other craft.",
+          "Create a playlist of 'healing' or 'happy' songs.",
+          "Record or perform a song or story you love.",
+          "Create a ‘self-portrait’ that shows your personality, not appearance.",
+        ],
+        [
+          "Do a puzzle, word search, Sudoku, or crossword.",
+          "Set a small weekly goal and track your progress.",
+          "Rearrange or tidy a small corner of your space.",
+          "Explore a topic that sparks your curiosity.",
+        ],
+        [
+          "Read a short article or comic.",
+          "Listen to a podcast or audiobook.",
+          "Watch an episode of a favorite show.",
+          "Journal about what brings you comfort.",
+          "Write yourself a supportive letter.",
+        ],
+        [
+          "Call or video chat with a loved one.",
+          "Share something creative or personal that you’re proud of with someone you trust.",
+          "Plan one enjoyable activity with someone you trust, such as watching a movie, taking a walk, or playing a game like chess.",
+        ],
+        [
+          "Massage a part of your body slowly and gently; this can be your hands, feet, scalp, neck, or another body part.",
+          "Take a mindful stroll outdoors, noticing your surroundings as you move.",
+          "Practice balance and posture for 10-15 minutes.",
+          "Take a long walk while listening to music, a podcast, or nature sounds.",
+        ],
+        [
+          "Make a ‘comfort kit’ with snacks, music, and items that calm you.",
+          "Reflect on how others have supported you.",
+          "Write down what you’d say to someone who’s struggling.",
+          "Do one small act of kindness anonymously.",
+        ],
+      ],
+    ],
   ];
 
   var pickedTasks = [];
@@ -85,7 +385,38 @@ class _MyWidgetState extends State<MyWidget> {
 
   var doneTasks = [];
 
+  List<Map<String, dynamic>> filteredTasks = [];
+
   int kittyInUse = 0;
+
+  final List<List<String>> taskImages = [
+    ["images/Tasks/Art1.png", "images/Tasks/Art2.png", "images/Tasks/Art3.png"],
+    ["images/Tasks/Cog1.png", "images/Tasks/Cog2.png", "images/Tasks/Cog3.png"],
+    ["images/Tasks/Min1.png", "images/Tasks/Min2.png", "images/Tasks/Min3.png"],
+    ["images/Tasks/Soc1.png", "images/Tasks/Soc2.png", "images/Tasks/Soc3.png"],
+    ["images/Tasks/Out1.png", "images/Tasks/Out2.png", "images/Tasks/Out3.png"],
+    ["images/Tasks/Oth1.png", "images/Tasks/Oth2.png", "images/Tasks/Oth3.png"],
+  ];
+
+  final List<String> compTaskImages = [
+    "images/TasksCom/Art.png",
+    "images/TasksCom/Cog.png",
+    "images/TasksCom/Min.png",
+    "images/TasksCom/Soc.png",
+    "images/TasksCom/Out.png",
+    "images/TasksCom/Oth.png",
+  ];
+
+  List<String> sectionNames = [
+    "Creative",
+    "Cognitive",
+    "Mindfulness",
+    "Social",
+    "Outdoor",
+    "Other",
+  ];
+
+  List<String> taskSelectionImages = [];
 
   final List<List<String>> kittyImages = [
     [
@@ -274,14 +605,14 @@ class _MyWidgetState extends State<MyWidget> {
     "Calico Kitty",
     "Siamese Kitty",
     "White Kitty",
-    "Black Collared Kitty",
-    "Calico Collared Kitty",
-    "Siamese Collared Kitty",
-    "White Collared Kitty",
-    "Black Hat Kitty",
-    "Calico Hat Kitty",
-    "Siamese Hat Kitty",
-    "White Hat Kitty",
+    "Collar for Black Kitty",
+    "Collar for Calico Kitty",
+    "Collar for Siamese Kitty",
+    "Collar for White Kitty",
+    "Hat for Black Kitty",
+    "Hat for Calico Kitty",
+    "Hat for Siamese Kitty",
+    "Hat for White Kitty",
     "Witch Kitty",
     "Koi Fish Kitty",
     "Moth Kitty",
@@ -409,23 +740,35 @@ class _MyWidgetState extends State<MyWidget> {
   @override
   void initState() {
     super.initState();
-    loadData().then((_) {
-      setState(() {
-        updateCatImages();
-        isLoading = false;
-      });
+
+    loadData().then((_) async {
+      // Only generate tasks if nothing was saved
+      if (filteredTasks.isEmpty) {
+        filteredTasks = genTaskList();
+      }
+
+      // Only set pickedTasks if nothing was saved
+      if (pickedTasks.isEmpty) {
+        pickedTasks = filteredTasks;
+      }
+
+      // Only set doneTasks if nothing was saved
+      if (doneTasks.isEmpty) {
+        doneTasks = List.filled(25, false);
+      }
+      updateCatImages();
+      isLoading = false;
+      setState(() {});
     });
-
     catImages = List.generate(9, (index) => kittyImages[kittyInUse][index]);
-
     shopItems = List.generate(
       16,
       (index) => {
         'image': 'images/${kittyTypes[index]}/${kittyTypes[index]}UO.png',
         'name': kittyNames[index],
         'price': getPriceForIndex(index),
-        'purchased': index < 4, // first 4 are unlocked by default
-        'using': index == 0, // first one is in use by default
+        'purchased': index < 4,
+        'using': index == 0,
       },
     );
   }
@@ -446,16 +789,74 @@ class _MyWidgetState extends State<MyWidget> {
     }
   }
 
-  List genTaskList() {
-    final random = Random();
-    List<String> shuffledTasks = List.from(tasks)..shuffle(random);
+  var hideSections = [false, false];
+  var hideLongs = false;
+  int taskLevel = 0;
+  List<Map<String, dynamic>> genTaskList() {
+    if (taskLevel < 0 || taskLevel >= tasks.length) return [];
 
-    for (int i = 0; i < 25 && i < shuffledTasks.length; i++) {
-      pickedTasks.add(shuffledTasks[i]);
-      doneTasks.add(false);
+    List<List<List<String>>> levelList = tasks[taskLevel];
+    List<Map<String, dynamic>> available = [];
+
+    // Build list with section info preserved
+    for (int j = 0; j < levelList.length; j++) {
+      // j = section (0=short, 1=medium, 2=long)
+      for (int k = 0; k < levelList[j].length; k++) {
+        if (hideLongs && j == 2) continue; // hide longs
+        if (hideSections[0] && k == 3) continue; // hide Social
+        if (hideSections[1] && k == 4) continue; // hide Outdoor
+
+        for (String task in levelList[j][k]) {
+          available.add({
+            'task': task,
+            'category': k, // Art..Oth
+            'section': j, // 0 short, 1 medium, 2 long
+          });
+        }
+      }
     }
 
-    return pickedTasks;
+    if (available.isEmpty) return [];
+
+    Random rng = Random();
+    List<Map<String, dynamic>> result = [];
+
+    for (int i = 0; i < 25; i++) {
+      var item = available[rng.nextInt(available.length)];
+      String task = item['task'];
+      int category = item['category'];
+      int order = item['section']; // image index based on short/med/long
+
+      // safety check in case image set is smaller than expected
+      if (order >= taskImages[category].length) order = 0;
+
+      result.add({
+        'task': task,
+        'category': category,
+        'index': i,
+        'tsi': taskImages[category][order],
+      });
+    }
+
+    return result;
+  }
+
+  int parseTaskCategory(String task) {
+    if (task.startsWith("Art")) return 0;
+    if (task.startsWith("Cog")) return 1;
+    if (task.startsWith("Min")) return 2;
+    if (task.startsWith("Soc")) return 3;
+    if (task.startsWith("Out")) return 4;
+    if (task.startsWith("Oth")) return 5;
+    return 0;
+  }
+
+  String getTaskImage(int category, int section, bool isCategoryCompleted) {
+    if (isCategoryCompleted) {
+      return compTaskImages[category];
+    } else {
+      return taskImages[category][section];
+    }
   }
 
   void buyItem(int index) {
@@ -505,75 +906,168 @@ class _MyWidgetState extends State<MyWidget> {
   Future<void> saveData() async {
     final prefs = await SharedPreferences.getInstance();
 
-    // Save ints
+    // --- Save integers ---
     prefs.setInt('kittyNumber', kittyNumber);
     prefs.setInt('heartNumber', heartNumber);
     prefs.setInt('textSize', textSize);
     prefs.setInt('kittyInUse', kittyInUse);
     prefs.setInt('selectedPattern', selectedPattern);
+    prefs.setInt('taskLevel', taskLevel);
+    prefs.setInt('money', money);
+    prefs.setInt('screenDisplayed', screenDisplayed);
+    prefs.setInt('currentTaskIndex', currentTaskIndex);
 
-    // Save strings
+    // --- Save strings ---
     prefs.setString('boardItem', boardItem);
+    prefs.setString('currentTask', currentTask);
 
-    // Save colors as ARGB integers
+    // --- Save colors ---
     prefs.setInt('backgroundColor', backgroundColor.value);
     prefs.setInt('foregroundColor', foregroundColor.value);
 
-    // Save pickedTasks and doneTasks as JSON strings
-    prefs.setString('pickedTasks', jsonEncode(pickedTasks));
-    prefs.setString('doneTasks', jsonEncode(doneTasks));
+    // --- Save booleans ---
+    prefs.setBool('hideLongs', hideLongs);
+    prefs.setBool('showResetConfirmation', showResetConfirmation);
 
-    // Save shopItems as JSON string
-    prefs.setString('shopItems', jsonEncode(shopItems));
+    // --- Save lists as JSON strings ---
+    prefs.setString('pickedTasks', jsonEncode(pickedTasks)); // List<String>
+    prefs.setString('doneTasks', jsonEncode(doneTasks)); // List<String>
+    prefs.setString(
+      'taskSelectionImages',
+      jsonEncode(taskSelectionImages),
+    ); // List<String>
+    prefs.setString('HideSections', jsonEncode(hideSections)); // List<bool>
+    prefs.setString(
+      'patternsChecked',
+      jsonEncode(patternsChecked),
+    ); // List<bool>
+    prefs.setString(
+      'filteredTasks',
+      jsonEncode(filteredTasks),
+    ); // List<Map<String, dynamic>>
+
+    // --- Save shopItems ---
+    prefs.setString(
+      'shopItems',
+      jsonEncode(shopItems),
+    ); // List<Map<String, dynamic>>
+  }
+
+  // Helper functions for background decoding
+  Future<List<String>> decodeStringList(String jsonString) async {
+    return List<String>.from(jsonDecode(jsonString));
+  }
+
+  Future<List<bool>> decodeBoolList(String jsonString) async {
+    return List<bool>.from(jsonDecode(jsonString));
+  }
+
+  Future<List<Map<String, dynamic>>> decodeMapList(String jsonString) async {
+    final decoded = jsonDecode(jsonString);
+    if (decoded is List) {
+      return decoded.map((e) => Map<String, dynamic>.from(e)).toList();
+    }
+    return <Map<String, dynamic>>[];
   }
 
   Future<void> loadData() async {
     final prefs = await SharedPreferences.getInstance();
 
-    kittyNumber = prefs.getInt('kittyNumber') ?? 0;
-    heartNumber = prefs.getInt('heartNumber') ?? 0;
-    textSize = prefs.getInt('textSize') ?? 24;
-    kittyInUse = prefs.getInt('kittyInUse') ?? 0;
-    selectedPattern = prefs.getInt('selectedPattern') ?? 0;
+    // --- Load simple types ---
+    kittyNumber = prefs.getInt('kittyNumber') ?? kittyNumber;
+    heartNumber = prefs.getInt('heartNumber') ?? heartNumber;
+    textSize = prefs.getInt('textSize') ?? textSize;
+    kittyInUse = prefs.getInt('kittyInUse') ?? kittyInUse;
+    selectedPattern = prefs.getInt('selectedPattern') ?? selectedPattern;
+    taskLevel = prefs.getInt('taskLevel') ?? taskLevel;
+    money = prefs.getInt('money') ?? money;
+    screenDisplayed = prefs.getInt('screenDisplayed') ?? screenDisplayed;
+    currentTaskIndex = prefs.getInt('currentTaskIndex') ?? currentTaskIndex;
 
-    boardItem = prefs.getString('boardItem') ?? "BINGO";
+    boardItem = prefs.getString('boardItem') ?? boardItem;
+    currentTask = prefs.getString('currentTask') ?? currentTask;
 
     int? bgColorInt = prefs.getInt('backgroundColor');
-    backgroundColor = bgColorInt != null
-        ? Color(bgColorInt)
-        : Color.fromARGB(255, 221, 255, 199);
+    backgroundColor = bgColorInt != null ? Color(bgColorInt) : backgroundColor;
 
     int? fgColorInt = prefs.getInt('foregroundColor');
-    foregroundColor = fgColorInt != null
-        ? Color(fgColorInt)
-        : Color.fromARGB(255, 15, 115, 60);
+    foregroundColor = fgColorInt != null ? Color(fgColorInt) : foregroundColor;
 
-    pickedTasks = jsonDecode(prefs.getString('pickedTasks') ?? '[]');
-    doneTasks = jsonDecode(prefs.getString('doneTasks') ?? '[]');
+    hideLongs = prefs.getBool('hideLongs') ?? hideLongs;
+    showResetConfirmation =
+        prefs.getBool('showResetConfirmation') ?? showResetConfirmation;
 
-    // Attempt to load shopItems from prefs
-    var loadedShopItems = prefs.getString('shopItems');
-    if (loadedShopItems != null && loadedShopItems.isNotEmpty) {
-      shopItems = List<Map<String, dynamic>>.from(jsonDecode(loadedShopItems));
-    } else {
-      // Fallback: regenerate shopItems if none exist.
-      shopItems = List.generate(
-        16,
-        (index) => {
-          'image': 'images/${kittyTypes[index]}/${kittyTypes[index]}UO.png',
-          'name': kittyNames[index],
-          'price': getPriceForIndex(index),
-          'purchased': index < 4, // first 4 are unlocked by default
-          'using': index == 0, // first one is in use by default
-        },
-      );
+    // --- Load lists asynchronously if they exist ---
+    try {
+      String? pickedTasksJson = prefs.getString('pickedTasks');
+      if (pickedTasksJson != null && pickedTasksJson.isNotEmpty) {
+        pickedTasks = List<String>.from(jsonDecode(pickedTasksJson));
+      }
+    } catch (e) {
+      print('Error decoding: $e');
+    }
+    try {
+      String? doneTasksJson = prefs.getString('doneTasks');
+      if (doneTasksJson != null && doneTasksJson.isNotEmpty) {
+        doneTasks = List<bool>.from(jsonDecode(doneTasksJson));
+      }
+    } catch (e) {
+      print('Error decoding: $e');
+    }
+
+    try {
+      String? taskSelectionImagesJson = prefs.getString('taskSelectionImages');
+      if (taskSelectionImagesJson != null &&
+          taskSelectionImagesJson.isNotEmpty) {
+        taskSelectionImages = List<String>.from(
+          jsonDecode(taskSelectionImagesJson),
+        );
+      }
+    } catch (e) {
+      print('Error decoding: $e');
+    }
+
+    try {
+      String? hideSectionsJson = prefs.getString('HideSections');
+      if (hideSectionsJson != null && hideSectionsJson.isNotEmpty) {
+        hideSections = List<bool>.from(jsonDecode(hideSectionsJson));
+      }
+    } catch (e) {
+      print('Error decoding: $e');
+    }
+
+    try {
+      String? patternsCheckedJson = prefs.getString('patternsChecked');
+      if (patternsCheckedJson != null && patternsCheckedJson.isNotEmpty) {
+        patternsChecked = List<bool>.from(jsonDecode(patternsCheckedJson));
+      }
+    } catch (e) {
+      print('Error decoding: $e');
+    }
+
+    try {
+      String? filteredTasksJson = prefs.getString('filteredTasks');
+      if (filteredTasksJson != null && filteredTasksJson.isNotEmpty) {
+        filteredTasks = List<Map<String, dynamic>>.from(
+          jsonDecode(filteredTasksJson),
+        );
+      }
+    } catch (e) {
+      print('Error decoding: $e');
+    }
+
+    try {
+      String? shopItemsJson = prefs.getString('shopItems');
+      if (shopItemsJson != null && shopItemsJson.isNotEmpty) {
+        shopItems = List<Map<String, dynamic>>.from(jsonDecode(shopItemsJson));
+      }
+    } catch (e) {
+      print('Error decoding: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    pickedTasks = genTaskList();
-
     if (isLoading) {
       return MaterialApp(
         home: Scaffold(body: Center(child: CircularProgressIndicator())),
@@ -880,6 +1374,38 @@ class _MyWidgetState extends State<MyWidget> {
                             ),
                           ],
                         ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text(
+                                "Task Level:",
+                                style: TextStyle(
+                                  fontSize: textSize.toDouble(),
+                                  color: foregroundColor,
+                                ),
+                              ),
+                            ),
+                            Slider(
+                              value: taskLevel.toDouble(),
+                              min: 0,
+                              max: 2,
+                              divisions: 2,
+                              label: (taskLevel + 1).toString(),
+                              activeColor: foregroundColor,
+                              thumbColor: foregroundColor,
+                              inactiveColor: backgroundColor,
+                              onChanged: (double newValue) {
+                                setState(() {
+                                  taskLevel = newValue.toInt();
+                                  doneTasks = List.filled(25, false);
+                                  patternsChecked = List.filled(12, false);
+                                  pickedTasks = genTaskList();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
@@ -905,7 +1431,7 @@ class _MyWidgetState extends State<MyWidget> {
                                 );
                               },
                             ),
-                            const SizedBox(height: 16),
+                            const SizedBox(height: 0),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: foregroundColor,
@@ -926,75 +1452,95 @@ class _MyWidgetState extends State<MyWidget> {
                             // Show Confirm and Cancel if toggled on
                             if (showResetConfirmation) ...[
                               const SizedBox(height: 8),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: foregroundColor,
-                                      foregroundColor: backgroundColor,
+                              Flexible(
+                                child: SingleChildScrollView(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0,
                                     ),
-                                    onPressed: () async {
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      await prefs.clear();
-                                      setState(() {
-                                        selectedPattern = 0;
-                                        kittyNumber = 0;
-                                        kittyInUse = 0;
-                                        updateCatImages();
-                                        backgroundColor =
-                                            colorPatterns[0].background;
-                                        foregroundColor =
-                                            colorPatterns[0].foreground;
-                                        textSize = 24;
-                                        pickedTasks.clear();
-                                        for (
-                                          int i = 0;
-                                          i < doneTasks.length;
-                                          i++
-                                        ) {
-                                          doneTasks[i] = false;
-                                        }
-                                        money = 0;
-                                        shopItems = List.generate(
-                                          16,
-                                          (index) => {
-                                            'image':
-                                                'images/${kittyTypes[index]}/${kittyTypes[index]}UO.png',
-                                            'name': kittyNames[index],
-                                            'price': getPriceForIndex(index),
-                                            'purchased':
-                                                index <
-                                                4, // first 4 are unlocked by default
-                                            'using':
-                                                index ==
-                                                0, // first one is in use by default
-                                          },
-                                        );
+                                    child: Wrap(
+                                      spacing: 16,
+                                      alignment: WrapAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: foregroundColor,
+                                            foregroundColor: backgroundColor,
+                                          ),
+                                          onPressed: () async {
+                                            final prefs =
+                                                await SharedPreferences.getInstance();
+                                            await prefs.clear();
+                                            setState(() {
+                                              selectedPattern = 0;
+                                              kittyNumber = 0;
+                                              kittyInUse = 0;
+                                              updateCatImages();
+                                              backgroundColor =
+                                                  colorPatterns[0].background;
+                                              foregroundColor =
+                                                  colorPatterns[0].foreground;
+                                              textSize = 24;
+                                              pickedTasks.clear();
+                                              filteredTasks.clear();
+                                              pickedTasks = genTaskList();
+                                              doneTasks = List.filled(
+                                                25,
+                                                false,
+                                              );
+                                              taskLevel = 0;
+                                              filteredTasks = [];
+                                              hideSections = [false, false];
+                                              hideLongs = false;
+                                              patternsChecked = List.filled(
+                                                12,
+                                                false,
+                                              );
+                                              money = 0;
+                                              shopItems = List.generate(
+                                                16,
+                                                (index) => {
+                                                  'image':
+                                                      'images/${kittyTypes[index]}/${kittyTypes[index]}UO.png',
+                                                  'name': kittyNames[index],
+                                                  'price': getPriceForIndex(
+                                                    index,
+                                                  ),
+                                                  'purchased':
+                                                      index <
+                                                      4, // first 4 are unlocked by default
+                                                  'using':
+                                                      index ==
+                                                      0, // first one is in use by default
+                                                },
+                                              );
 
-                                        showResetConfirmation = false;
-                                      });
-                                      saveData();
-                                    },
-                                    child: const Text("Confirm"),
-                                  ),
-                                  const SizedBox(
-                                    width: 16,
-                                  ), // horizontal space between buttons
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: foregroundColor,
-                                      foregroundColor: backgroundColor,
+                                              showResetConfirmation = false;
+                                            });
+                                            saveData();
+                                          },
+                                          child: const Text("Confirm"),
+                                        ),
+                                        const SizedBox(
+                                          width: 16,
+                                          height: 3,
+                                        ), // horizontal space between buttons
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: foregroundColor,
+                                            foregroundColor: backgroundColor,
+                                          ),
+                                          onPressed: () {
+                                            setState(() {
+                                              showResetConfirmation = false;
+                                            });
+                                          },
+                                          child: const Text("Cancel"),
+                                        ),
+                                      ],
                                     ),
-                                    onPressed: () {
-                                      setState(() {
-                                        showResetConfirmation = false;
-                                      });
-                                    },
-                                    child: const Text("Cancel"),
                                   ),
-                                ],
+                                ),
                               ),
                             ],
                           ],
@@ -1046,7 +1592,6 @@ class _MyWidgetState extends State<MyWidget> {
                   onPressed: () async {
                     setState(() {
                       pickedTasks = genTaskList();
-                      pickedTasks.clear();
                       for (int i = 0; i < doneTasks.length; i++) {
                         doneTasks[i] = false;
                       }
@@ -1131,176 +1676,251 @@ class _MyWidgetState extends State<MyWidget> {
                                             setState(() {
                                               // Do something based on the position
                                               if (row == 0 && col == 0) {
-                                                currentTask = pickedTasks[0];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 0 && col == 1) {
-                                                currentTask = pickedTasks[1];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 0 && col == 2) {
-                                                currentTask = pickedTasks[2];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 0 && col == 3) {
-                                                currentTask = pickedTasks[3];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 0 && col == 4) {
-                                                currentTask = pickedTasks[4];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 1 && col == 0) {
-                                                currentTask = pickedTasks[5];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 1 && col == 1) {
-                                                currentTask = pickedTasks[6];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 1 && col == 2) {
-                                                currentTask = pickedTasks[7];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 1 && col == 3) {
-                                                currentTask = pickedTasks[8];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 1 && col == 4) {
-                                                currentTask = pickedTasks[9];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 2 && col == 0) {
-                                                currentTask = pickedTasks[10];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 2 && col == 1) {
-                                                currentTask = pickedTasks[11];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 2 && col == 2) {
-                                                currentTask = pickedTasks[12];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 2 && col == 3) {
-                                                currentTask = pickedTasks[13];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 2 && col == 4) {
-                                                currentTask = pickedTasks[14];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 3 && col == 0) {
-                                                currentTask = pickedTasks[15];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 3 && col == 1) {
-                                                currentTask = pickedTasks[16];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 3 && col == 2) {
-                                                currentTask = pickedTasks[17];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 3 && col == 3) {
-                                                currentTask = pickedTasks[18];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 3 && col == 4) {
-                                                currentTask = pickedTasks[19];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 4 && col == 0) {
-                                                currentTask = pickedTasks[20];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 4 && col == 1) {
-                                                currentTask = pickedTasks[21];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 4 && col == 2) {
-                                                currentTask = pickedTasks[22];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 4 && col == 3) {
-                                                currentTask = pickedTasks[23];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
                                                 });
                                               } else if (row == 4 && col == 4) {
-                                                currentTask = pickedTasks[24];
+                                                int index = row * 5 + col;
                                                 setState(() {
+                                                  currentTaskIndex = index;
+                                                  currentTask =
+                                                      pickedTasks[index]['task'];
                                                   kittyNumber = 0;
                                                   heartNumber = 0;
                                                   screenDisplayed = 3;
@@ -1308,12 +1928,63 @@ class _MyWidgetState extends State<MyWidget> {
                                               }
                                             });
                                           },
-                                          child: Text(
-                                            doneTasks[row * 5 + col]
-                                                ? '✓'
-                                                : 'X',
-                                            style: TextStyle(
-                                              fontSize: textSize.toDouble(),
+                                          child: SizedBox(
+                                            width: buttonSize * 0.8,
+                                            height: buttonSize * 0.8,
+                                            child: Padding(
+                                              padding: EdgeInsets.all(0.0),
+                                              child: SizedBox(
+                                                width: buttonSize,
+                                                height: buttonSize,
+                                                child: ElevatedButton(
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        foregroundColor,
+                                                    foregroundColor:
+                                                        backgroundColor,
+                                                    side: BorderSide(
+                                                      color: foregroundColor,
+                                                    ),
+                                                    padding: EdgeInsets.zero,
+                                                    shape:
+                                                        RoundedRectangleBorder(),
+                                                  ),
+                                                  onPressed: () {
+                                                    int index = row * 5 + col;
+                                                    setState(() {
+                                                      currentTaskIndex = index;
+                                                      currentTask =
+                                                          pickedTasks[index]['task'];
+                                                      kittyNumber = 0;
+                                                      heartNumber = 0;
+                                                      screenDisplayed =
+                                                          3; // Open task screen
+                                                    });
+                                                  },
+                                                  child: SizedBox(
+                                                    width: buttonSize * 0.8,
+                                                    height: buttonSize * 0.8,
+                                                    child: Image.asset(
+                                                      doneTasks[row * 5 + col]
+                                                          ? compTaskImages[(pickedTasks[row *
+                                                                            5 +
+                                                                        col]['category']
+                                                                    is int)
+                                                                ? pickedTasks[row *
+                                                                              5 +
+                                                                          col]['category']
+                                                                      as int
+                                                                : 0]
+                                                          : (pickedTasks[row *
+                                                                            5 +
+                                                                        col]['tsi']
+                                                                    as String? ??
+                                                                'images/placeholder.png'),
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ),
@@ -1326,6 +1997,74 @@ class _MyWidgetState extends State<MyWidget> {
                           ),
                         );
                       },
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Wrap(
+                      spacing: 8, // horizontal spacing between buttons
+                      runSpacing: 8, // vertical spacing between rows of buttons
+                      alignment: WrapAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              hideSections[0] = !hideSections[0];
+                              filteredTasks = genTaskList();
+                              pickedTasks = filteredTasks;
+                              for (int i = 0; i < doneTasks.length; i++) {
+                                doneTasks[i] = false;
+                              }
+                            });
+                          },
+                          child: Text(
+                            hideSections[0] ? "Show Social" : "Hide Social",
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              hideSections[1] = !hideSections[1];
+                              filteredTasks = genTaskList();
+                              pickedTasks = filteredTasks;
+                              for (int i = 0; i < doneTasks.length; i++) {
+                                doneTasks[i] = false;
+                              }
+                            });
+                          },
+                          child: Text(
+                            hideSections[1] ? "Show Outdoor" : "Hide Outdoor",
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              hideLongs = !hideLongs;
+                              filteredTasks = genTaskList();
+                              pickedTasks = filteredTasks;
+                              for (int i = 0; i < doneTasks.length; i++) {
+                                doneTasks[i] = false;
+                              }
+                            });
+                          },
+                          child: Text(hideLongs ? "Show Long" : "Hide Long"),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              // Clear all sample filters.
+                              hideSections = [false, false];
+                              hideLongs = false;
+                              filteredTasks = genTaskList();
+                              pickedTasks = filteredTasks;
+                              for (int i = 0; i < doneTasks.length; i++) {
+                                doneTasks[i] = false;
+                              }
+                            });
+                          },
+                          child: const Text("Clear"),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -1376,13 +2115,18 @@ class _MyWidgetState extends State<MyWidget> {
                               0,
                               0.75,
                             ), // x=0 is center, y=0.75 pushes it lower
-                            child: Text(
-                              currentTask,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: foregroundColor,
-                                fontSize: textSize.toDouble(),
-                              ),
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Text(
+                                  currentTask,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: foregroundColor,
+                                    fontSize: textSize.toDouble(),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -1424,12 +2168,15 @@ class _MyWidgetState extends State<MyWidget> {
                         });
                         await Future.delayed(Duration(seconds: 1));
                         setState(() {
+                          print("Marking task index $currentTaskIndex as done");
                           kittyNumber = 0;
-                          int taskIndex = pickedTasks.indexOf(currentTask);
-                          if (taskIndex != -1) {
-                            doneTasks[taskIndex] = true;
+                          print(kittyNumber = 0);
+                          if (currentTaskIndex != -1 &&
+                              currentTaskIndex < doneTasks.length) {
+                            doneTasks[currentTaskIndex] = true;
                           }
                           money += updatePatterns() * 10;
+                          currentTaskIndex = -1;
                           screenDisplayed = 2;
                         });
                         saveData();
@@ -1457,10 +2204,13 @@ class _MyWidgetState extends State<MyWidget> {
                             kittyNumber = 0;
                             screenDisplayed = 1;
                           });
-                          int taskIndex = pickedTasks.indexOf(currentTask);
-                          if (taskIndex != -1) {
-                            doneTasks[taskIndex] = false;
+                          if (currentTaskIndex != -1) {
+                            if (doneTasks[currentTaskIndex] == true) {
+                              money -= 10;
+                            }
+                            doneTasks[currentTaskIndex] = false;
                           }
+                          currentTaskIndex = -1;
                           screenDisplayed = 2;
                         });
                         saveData();
@@ -1511,7 +2261,7 @@ class _MyWidgetState extends State<MyWidget> {
                       child: SingleChildScrollView(
                         child: Center(
                           child: Text(
-                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 1.0.0',
+                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.0.0',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: foregroundColor,
