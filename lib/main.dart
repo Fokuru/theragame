@@ -1426,8 +1426,25 @@ class _MyWidgetState extends State<MyWidget> {
                                     !_kittyTimer!.isActive) {
                                   _startKittyAnimation();
                                 }
-                                return Image(
-                                  image: AssetImage((catImages[kittyNumber])),
+
+                                // compute an inverse scale factor from textSize (12..28)
+                                final double minText = 12.0;
+                                final double maxText = 28.0;
+                                double t =
+                                    ((maxText - textSize) / (maxText - minText))
+                                        .clamp(0.0, 1.0);
+                                // widthFactor ranges roughly from 0.8 (big text) to 1.0 (small text)
+                                double widthFactor = 0.8 + (0.2 * t);
+
+                                return FractionallySizedBox(
+                                  widthFactor: widthFactor,
+                                  child: AspectRatio(
+                                    aspectRatio: 1.0,
+                                    child: Image(
+                                      image: AssetImage(catImages[kittyNumber]),
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
                                 );
                               },
                             ),
@@ -2261,7 +2278,7 @@ class _MyWidgetState extends State<MyWidget> {
                       child: SingleChildScrollView(
                         child: Center(
                           child: Text(
-                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.0.0',
+                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.0.1',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: foregroundColor,
