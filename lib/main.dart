@@ -36,7 +36,10 @@ class _MyWidgetState extends State<MyWidget> {
           "Keep a comfort box with items that help you feel better nearby.",
           "Name five things you can see, hear, and feel right now.",
         ],
-        ["Set a tiny goal for the next hour."],
+        [
+          "Set a tiny goal for the next hour.",
+          "Watch an informational YouTube video.",
+        ],
         [
           "Listen to a favorite song.",
           "Scroll through calming photos, such as nature or animals.",
@@ -100,7 +103,10 @@ class _MyWidgetState extends State<MyWidget> {
           "Knit, crochet, or do some other craft.",
           "Create a playlist of 'healing' or 'happy' songs.",
         ],
-        ["Do a puzzle, word search, Sudoku, or crossword."],
+        [
+          "Do a puzzle, word search, Sudoku, or crossword.",
+          "Start a new book, try to read a couple of chapters in one you're already reading.",
+        ],
         [
           "Read a short article or comic.",
           "Listen to a podcast or audiobook.",
@@ -124,6 +130,7 @@ class _MyWidgetState extends State<MyWidget> {
         [
           "Set a tiny goal for the next hour.",
           "Write a to-do list for tomorrow that includes one fun activity.",
+          "Watch an informational YouTube video.",
         ],
         [
           "Listen to a favorite song.",
@@ -212,6 +219,7 @@ class _MyWidgetState extends State<MyWidget> {
           "Do a puzzle, word search, Sudoku, or crossword.",
           "Set a small weekly goal and track your progress.",
           "Rearrange or tidy a small corner of your space.",
+          "Start a new book, try to read a couple of chapters in one you're already reading.",
         ],
         [
           "Read a short article or comic.",
@@ -244,6 +252,7 @@ class _MyWidgetState extends State<MyWidget> {
           "Set a tiny goal for the next hour.",
           "Write a to-do list for tomorrow that includes one fun activity.",
           "Learn one new word or phrase.",
+          "Watch an informational YouTube video.",
         ],
         [
           "Listen to a favorite song.",
@@ -350,6 +359,7 @@ class _MyWidgetState extends State<MyWidget> {
           "Set a small weekly goal and track your progress.",
           "Rearrange or tidy a small corner of your space.",
           "Explore a topic that sparks your curiosity.",
+          "Start a new book, try to read a couple of chapters in one you're already reading.",
         ],
         [
           "Read a short article or comic.",
@@ -368,6 +378,7 @@ class _MyWidgetState extends State<MyWidget> {
           "Take a mindful stroll outdoors, noticing your surroundings as you move.",
           "Practice balance and posture for 10-15 minutes.",
           "Take a long walk while listening to music, a podcast, or nature sounds.",
+          "Visit an animal shelter, park, or pet store to interact with animals safely.",
         ],
         [
           "Make a ‘comfort kit’ with snacks, music, and items that calm you.",
@@ -2190,7 +2201,10 @@ class _MyWidgetState extends State<MyWidget> {
                           print(kittyNumber = 0);
                           if (currentTaskIndex != -1 &&
                               currentTaskIndex < doneTasks.length) {
-                            doneTasks[currentTaskIndex] = true;
+                            if (doneTasks[currentTaskIndex] == false) {
+                              doneTasks[currentTaskIndex] = true;
+                              money += 1;
+                            }
                           }
                           money += updatePatterns() * 10;
                           currentTaskIndex = -1;
@@ -2223,9 +2237,25 @@ class _MyWidgetState extends State<MyWidget> {
                           });
                           if (currentTaskIndex != -1) {
                             if (doneTasks[currentTaskIndex] == true) {
-                              money -= 10;
+                              money -= 1;
+                              doneTasks[currentTaskIndex] = false;
+
+                              for (int i = 0; i < winPatterns.length; i++) {
+                                // Skip patterns that are not marked completed
+                                if (!patternsChecked[i]) continue;
+
+                                // If this pattern includes the task we just removed
+                                if (winPatterns[i].contains(currentTaskIndex)) {
+                                  // Check if the pattern is now broken
+                                  bool nowIncomplete = !isPatternComplete(i);
+
+                                  if (nowIncomplete) {
+                                    patternsChecked[i] = false;
+                                    money -= 10;
+                                  }
+                                }
+                              }
                             }
-                            doneTasks[currentTaskIndex] = false;
                           }
                           currentTaskIndex = -1;
                           screenDisplayed = 2;
@@ -2278,7 +2308,7 @@ class _MyWidgetState extends State<MyWidget> {
                       child: SingleChildScrollView(
                         child: Center(
                           child: Text(
-                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.0.1',
+                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.0.2',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: foregroundColor,
