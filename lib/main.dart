@@ -418,13 +418,30 @@ class _MyWidgetState extends State<MyWidget> {
     "images/TasksCom/Oth.png",
   ];
 
+  final List<String> taskTimes = ["Time 1", "Time 2", "Time 3"];
+
+  final List<String> taskTimeInfo = [
+    "A Time 1 Task will take up to 5 minutes",
+    "A Time 2 Task will take up to 10 minutes",
+    "A Time 3 Task will take more than 10 minutes and could be a longer task that takes up time over a period as long as a week",
+  ];
+
   List<String> sectionNames = [
     "Creative",
     "Cognitive",
-    "Mindfulness",
+    "Mindful",
     "Social",
-    "Outdoor",
+    "Exercise",
     "Other",
+  ];
+
+  List<String> sectionInfo = [
+    "Creative tasks include creating or designing something new or completing a preivious project by you or someone else.",
+    "Cognitive tasks include completing puzzles, word searches and other such things, reading something, or learning something new.",
+    "Mindeful tasks include taking time for yourself.",
+    "Social tasks include another person or doing something nice for someone else.",
+    "Exercise tasks include taking time for your body.",
+    "Other tasks include tasks that don't fit in the other catigories.",
   ];
 
   List<String> taskSelectionImages = [];
@@ -2045,8 +2062,18 @@ class _MyWidgetState extends State<MyWidget> {
                               }
                             });
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: hideSections[0]
+                                ? backgroundColor
+                                : foregroundColor,
+                            foregroundColor: hideSections[0]
+                                ? foregroundColor
+                                : backgroundColor,
+                          ),
                           child: Text(
                             hideSections[0] ? "Show Social" : "Hide Social",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: textSize.toDouble()),
                           ),
                         ),
                         ElevatedButton(
@@ -2060,8 +2087,18 @@ class _MyWidgetState extends State<MyWidget> {
                               }
                             });
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: hideSections[1]
+                                ? backgroundColor
+                                : foregroundColor,
+                            foregroundColor: hideSections[1]
+                                ? foregroundColor
+                                : backgroundColor,
+                          ),
                           child: Text(
                             hideSections[1] ? "Show Outdoor" : "Hide Outdoor",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: textSize.toDouble()),
                           ),
                         ),
                         ElevatedButton(
@@ -2075,7 +2112,19 @@ class _MyWidgetState extends State<MyWidget> {
                               }
                             });
                           },
-                          child: Text(hideLongs ? "Show Long" : "Hide Long"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: hideLongs
+                                ? backgroundColor
+                                : foregroundColor,
+                            foregroundColor: hideLongs
+                                ? foregroundColor
+                                : backgroundColor,
+                          ),
+                          child: Text(
+                            hideLongs ? "Show Long" : "Hide Long",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: textSize.toDouble()),
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: () {
@@ -2090,7 +2139,41 @@ class _MyWidgetState extends State<MyWidget> {
                               }
                             });
                           },
-                          child: const Text("Clear"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: foregroundColor,
+                            foregroundColor: backgroundColor,
+                          ),
+                          child: Text(
+                            "Clear",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: textSize.toDouble()),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Wrap(
+                      spacing: 8, // horizontal spacing between buttons
+                      runSpacing: 8, // vertical spacing between rows of buttons
+                      alignment: WrapAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              screenDisplayed = 6;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: foregroundColor,
+                            foregroundColor: backgroundColor,
+                          ),
+                          child: Text(
+                            "Help",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: textSize.toDouble()),
+                          ),
                         ),
                       ],
                     ),
@@ -2308,7 +2391,7 @@ class _MyWidgetState extends State<MyWidget> {
                       child: SingleChildScrollView(
                         child: Center(
                           child: Text(
-                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.0.2',
+                            'Disclamer: This app was made by a student for a Girl Scouts Gold Award project and is not mediaclly approved. Do not use this app as a substitute for professional therapy or medical advice.\n\nHello!\n\nWelcome to Theragame, a game designed to help you come to enjoy therapy and spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting 5 tasks in a row much like a bingo board and then spend it in the shop screen.\n\nTo complette tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Raley Wilkin\n\nVersion: 2.5.0',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: foregroundColor,
@@ -2457,6 +2540,132 @@ class _MyWidgetState extends State<MyWidget> {
                   ),
                 );
               },
+            ),
+          ),
+        ),
+      );
+    }
+
+    if (screenDisplayed == 6) {
+      _stopKittyAnimation();
+      return MaterialApp(
+        home: SafeArea(
+          child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: Icon(Icons.home),
+                iconSize: 100,
+                color: backgroundColor,
+                onPressed: () {
+                  setState(() {
+                    screenDisplayed = 2;
+                  });
+                  _stopKittyAnimation();
+                  saveData();
+                },
+              ),
+              title: const Center(child: Text("Help")),
+              backgroundColor: foregroundColor,
+              titleTextStyle: TextStyle(color: backgroundColor, fontSize: 50),
+              toolbarHeight: 120,
+            ),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Container(
+                  width: double.infinity,
+                  color: backgroundColor,
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // ---- Activity Images ----
+                      Center(
+                        child: Text(
+                          'Shown below are all of the images used to indicate different activities:',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: foregroundColor,
+                            fontSize: textSize.toDouble(),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      for (int i = 0; i < 6; i++) ...[
+                        Center(
+                          child: Image.asset(
+                            taskImages[i][0],
+                            fit: BoxFit.contain,
+                            width: 200,
+                          ),
+                        ),
+                        Text(
+                          sectionNames[i],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: foregroundColor,
+                            fontSize: textSize.toDouble(),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          sectionInfo[i],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: foregroundColor,
+                            fontSize: textSize.toDouble() - 4,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+
+                      const SizedBox(height: 60),
+
+                      Text(
+                        'Shown below which colors indicate which times and how long each task is expected to take:',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: foregroundColor,
+                          fontSize: textSize.toDouble(),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 40),
+
+                      for (int i = 0; i < 3; i++) ...[
+                        Center(
+                          child: Image.asset(
+                            taskImages[0][i],
+                            fit: BoxFit.contain,
+                            width: 200,
+                          ),
+                        ),
+                        Text(
+                          taskTimes[i],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: foregroundColor,
+                            fontSize: textSize.toDouble(),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          taskTimeInfo[i],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: foregroundColor,
+                            fontSize: textSize.toDouble() - 4,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
         ),
