@@ -105,7 +105,7 @@ class _MyWidgetState extends State<MyWidget> {
         ],
         [
           "Do a puzzle, word search, Sudoku, or crossword.",
-          "Start a new book, try to read a couple of chapters in one you're already reading.",
+          "Read a couple of chapters in either a new book or one you are already reading.",
         ],
         [
           "Read a short article or comic.",
@@ -1639,6 +1639,9 @@ class _MyWidgetState extends State<MyWidget> {
                       pickedTasks = genTaskList();
                       for (int i = 0; i < doneTasks.length; i++) {
                         doneTasks[i] = false;
+                      }
+                      for (int i = 0; i < patternsChecked.length; i++) {
+                        patternsChecked[i] = false;
                       }
                       saveData();
                     });
