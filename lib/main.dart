@@ -16,7 +16,7 @@ class MyWidget extends StatefulWidget {
   State<MyWidget> createState() => _MyWidgetState();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
   int kittyNumber = 0; // Default image
   int heartNumber = 0;
   int screenDisplayed =
@@ -768,6 +768,7 @@ class _MyWidgetState extends State<MyWidget> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     loadData().then((_) async {
       // Only generate tasks if nothing was saved
@@ -777,7 +778,7 @@ class _MyWidgetState extends State<MyWidget> {
 
       // Only set pickedTasks if nothing was saved
       if (pickedTasks.isEmpty) {
-        pickedTasks = filteredTasks;
+        pickedTasks = filteredTasks.map((e) => e['task'] as String).toList();
       }
 
       // Only set doneTasks if nothing was saved
@@ -928,7 +929,15 @@ class _MyWidgetState extends State<MyWidget> {
   @override
   void dispose() {
     _kittyTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _stopKittyAnimation();
+    }
   }
 
   Future<void> saveData() async {
@@ -1005,9 +1014,16 @@ class _MyWidgetState extends State<MyWidget> {
     kittyNumber = prefs.getInt('kittyNumber') ?? kittyNumber;
     heartNumber = prefs.getInt('heartNumber') ?? heartNumber;
     textSize = prefs.getInt('textSize') ?? textSize;
-    kittyInUse = prefs.getInt('kittyInUse') ?? kittyInUse;
-    selectedPattern = prefs.getInt('selectedPattern') ?? selectedPattern;
-    taskLevel = prefs.getInt('taskLevel') ?? taskLevel;
+    kittyInUse = (prefs.getInt('kittyInUse') ?? kittyInUse).clamp(
+      0,
+      kittyImages.length - 1,
+    );
+    selectedPattern = (prefs.getInt('selectedPattern') ?? selectedPattern)
+        .clamp(0, colorPatterns.length - 1);
+    taskLevel = (prefs.getInt('taskLevel') ?? taskLevel).clamp(
+      0,
+      tasks.length - 1,
+    );
     money = prefs.getInt('money') ?? money;
     screenDisplayed = prefs.getInt('screenDisplayed') ?? screenDisplayed;
     currentTaskIndex = prefs.getInt('currentTaskIndex') ?? currentTaskIndex;
@@ -1091,6 +1107,20 @@ class _MyWidgetState extends State<MyWidget> {
       }
     } catch (e) {
       print('Error decoding: $e');
+    }
+
+    // Validate and fix data lengths
+    if (filteredTasks.length != 25) {
+      filteredTasks = genTaskList();
+    }
+    if (pickedTasks.length != 25) {
+      pickedTasks = filteredTasks.map((e) => e['task'] as String).toList();
+    }
+    if (doneTasks.length != 25) {
+      doneTasks = List.filled(25, false);
+    }
+    if (patternsChecked.length != 12) {
+      patternsChecked = List.filled(12, false);
     }
   }
 
