@@ -390,7 +390,7 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
     ],
   ];
 
-  var pickedTasks = [];
+  var pickedTasks = <Map<String, dynamic>>[];
 
   String currentTask = "";
 
@@ -778,7 +778,7 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
 
       // Only set pickedTasks if nothing was saved
       if (pickedTasks.isEmpty) {
-        pickedTasks = filteredTasks.map((e) => e['task'] as String).toList();
+        pickedTasks = filteredTasks;
       }
 
       // Only set doneTasks if nothing was saved
@@ -967,7 +967,7 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
     prefs.setBool('showResetConfirmation', showResetConfirmation);
 
     // --- Save lists as JSON strings ---
-    prefs.setString('pickedTasks', jsonEncode(pickedTasks)); // List<String>
+    prefs.setString('pickedTasks', jsonEncode(pickedTasks)); // List<Map<String, dynamic>>
     prefs.setString('doneTasks', jsonEncode(doneTasks)); // List<String>
     prefs.setString(
       'taskSelectionImages',
@@ -1045,10 +1045,16 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
     try {
       String? pickedTasksJson = prefs.getString('pickedTasks');
       if (pickedTasksJson != null && pickedTasksJson.isNotEmpty) {
-        pickedTasks = List<String>.from(jsonDecode(pickedTasksJson));
+        var decoded = jsonDecode(pickedTasksJson);
+        if (decoded is List && decoded.isNotEmpty) {
+          if (decoded.first is Map) {
+            pickedTasks = List<Map<String, dynamic>>.from(decoded.map((e) => Map<String, dynamic>.from(e)));
+          }
+          // If it's List<String> (old format), leave pickedTasks empty so it gets regenerated
+        }
       }
     } catch (e) {
-      print('Error decoding: $e');
+      print('Error decoding pickedTasks: $e');
     }
     try {
       String? doneTasksJson = prefs.getString('doneTasks');
@@ -1114,7 +1120,7 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
       filteredTasks = genTaskList();
     }
     if (pickedTasks.length != 25) {
-      pickedTasks = filteredTasks.map((e) => e['task'] as String).toList();
+      pickedTasks = filteredTasks;
     }
     if (doneTasks.length != 25) {
       doneTasks = List.filled(25, false);
