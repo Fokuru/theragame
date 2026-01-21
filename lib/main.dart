@@ -112,7 +112,7 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
           "Listen to a podcast or audiobook.",
           "Watch an episode of a favorite show.",
         ],
-        [],
+        ["Attend a therapy meeting of some kind, group or otherwise."],
         [
           "Massage a part of your body slowly and gently; this can be your hands, feet, scalp, neck, or another body part.",
         ],
@@ -967,7 +967,10 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
     prefs.setBool('showResetConfirmation', showResetConfirmation);
 
     // --- Save lists as JSON strings ---
-    prefs.setString('pickedTasks', jsonEncode(pickedTasks)); // List<Map<String, dynamic>>
+    prefs.setString(
+      'pickedTasks',
+      jsonEncode(pickedTasks),
+    ); // List<Map<String, dynamic>>
     prefs.setString('doneTasks', jsonEncode(doneTasks)); // List<String>
     prefs.setString(
       'taskSelectionImages',
@@ -1048,7 +1051,9 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
         var decoded = jsonDecode(pickedTasksJson);
         if (decoded is List && decoded.isNotEmpty) {
           if (decoded.first is Map) {
-            pickedTasks = List<Map<String, dynamic>>.from(decoded.map((e) => Map<String, dynamic>.from(e)));
+            pickedTasks = List<Map<String, dynamic>>.from(
+              decoded.map((e) => Map<String, dynamic>.from(e)),
+            );
           }
           // If it's List<String> (old format), leave pickedTasks empty so it gets regenerated
         }
