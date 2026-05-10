@@ -2434,7 +2434,7 @@ class _MyWidgetState extends State<MyWidget> with WidgetsBindingObserver {
                       child: SingleChildScrollView(
                         child: Center(
                           child: Text(
-                            'Disclaimer: This app is a game created for a Girl Scout Gold Award project.\n\nHello!\n\nWelcome to Theragame, a game where you spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting tasks and then spending it in the shop screen.\n\nTo complete tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Okami/Fokuru\n\nVersion: 2.8.0',
+                            'Hello!\n\nWelcome to Theragame, a game where you spend time with your virtual kitty.\n\nYou can interact with your kitty, complete tasks, and even shop for new kitties with in game money earned from completting tasks and then spending it in the shop screen.\n\nTo complete tasks, go to the board screen and click on the squares. You can mark tasks as done as you do them and go back to the board screen by either pressing the -Not Done- button or the back arrow at the top left.\n\nHave fun and enjoy your time with your kitty!\n\nCreated by: Okami/Fokuru\n\nVersion: 2.9.0',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               color: foregroundColor,
