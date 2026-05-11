@@ -1,4 +1,4 @@
-## Shake Alarm Clock: Privacy policy
+## Theragame: Privacy policy
 
 Welcome to Theragame app for Android!
 
